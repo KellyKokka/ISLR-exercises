@@ -1,0 +1,417 @@
+
+---
+title: "CW1_13158613_K_Kokka"
+---
+Kyriaki Kokka ,MSc Data Science ,Id number:13158613  ,Date: 18/11/2018
+
+##1. Statistical learning methods##
+
+For each of parts (a) through (d), indicate whether we would generally expect the performance of a flexible
+statistical learning method to be better or worse than an inflexible method. Justify your answer.
+
+**(a)** The sample size n is extremely large, and the number of predictors p is small.
+
+**Answer:** A flexible model will perform better in general.Because of the large sample size,we are less likely to overfit,even when using a more flexible model.What is more,a more flexible model tends to reduce bias.
+
+**(b)** The number of predictors p is extremely large, and the number of observations n is small.
+
+**Answer:** An inflexible model will perform better.A flexible model will cause overfitting because of the small sample size.This usually means a bigger inflation in variance and a small reduction in bias.
+
+**(c)** The relationship between the predictors and response is highly non-linear.
+
+**Answer:** A flexible model will perform better in general because it will be necessary to use a flexible model to find the non-linear effect.
+
+**(d)** The variance of the error terms, i.e. $\sigma^2$ = $Var(\epsilon)$, is extremely high.
+
+**Answer:** An inflexible model will perform better in general.Because a flexible model will capture too much of the noise in the data due to the large variance of the errors.
+
+
+
+##2. Descriptive analysis##
+
+In a higher educational institution the comprehensive applied mathematics exam is comprised of two parts.
+On the first day, 20 students took the exam, the results of which are presented below:
+
+**Oral exam results:** 4, 1, 4, 5, 3, 2, 3, 4, 3, 5, 2, 2, 4, 3, 5, 5, 1, 1, 1, 2.
+
+**Written exam results:** 2, 3, 1, 4, 2, 5, 3, 1, 2, 1, 2, 2, 1, 1, 2, 3, 1, 2, 3, 4.
+
+**(a)** Use R to calculate the mean, the mode, the median, the variance and the standard deviation of the
+oral and written exams separately and together as well.
+```{r}
+oral<-c(4,1,4,5,3,2,3,4,3,5,2,2,4,3,5,5,1,1,1,2)
+written<-c(2,3,1,4,2,5,3,1,2,1,2,2,1,1,2,3,1,2,3,4)
+mean(oral)  
+median(oral)
+mode(oral)
+var(oral)
+sd(oral)
+mean(written)
+median(written)
+var(written)
+sd(written)
+x<-oral+written
+mean(x)
+median(x)
+var(x)
+sd(x)
+```
+
+**(b)** Find the covariance and correlation between the oral and written exam scores.
+```{r}
+cor(oral,written)
+cov(oral,written)
+```
+
+**(c)** Is there a positive or negative or no correlation between the two?
+
+I assume that there is low negative correlation(cor=-0,1869) because the value is too close to 0 and values between (-0.3,0.3) show the weakest linear relationship.What is more,as far as the covariance is concerned,we have negative covariance.This indicates that greater values of one variable tend to be paired with lesser values of the other variable.
+
+**(d)** Is there causation between the two? Justify your answers.
+
+There is no causation between oral and written scores.It is really hard to find a causation generally and although it is very important it is the last and the most desirable thing we expect to get from the analysis.
+
+```{r}
+
+
+```
+
+##3. Descriptive analysis##
+
+This exercise involves the Auto data set studied in the class. Make sure that the missing values have been
+removed from the data.
+
+**(a)** Which of the predictors are quantitative, and which are qualitative?
+
+**quantitative:** mpg, cylinders, displacement, horsepower, weight,acceleration, year
+**qualitative:** name, origin
+
+```{r}
+library(ISLR)
+data("Auto")
+Auto = na.omit(Auto)
+summary(Auto)
+```
+
+**(b)** What is the range of each quantitative predictor? You can answer this using the range() function.
+```{r}
+sapply(Auto[, 1:7], range)
+```
+
+
+**(c)** What is the mean and standard deviation of each quantitative predictor?
+```{r}
+sapply(Auto[, 1:7], mean)
+sapply(Auto[, 1:7], sd)
+```
+
+
+**(d)** Now remove the 10th through 85th observations. What is the range, mean, and standard deviation of
+each predictor in the subset of the data that remains?
+```{r}
+newAuto = Auto[-(10:85),]
+sapply(newAuto[, 1:7], range)
+sapply(newAuto[, 1:7], mean)
+sapply(newAuto[, 1:7], sd)
+```
+
+
+**(e)** Using the full data set, investigate the predictors graphically, using scatterplots or other tools of your
+choice. Create some plots highlighting the relationships among the predictors. Comment on your
+findings.
+```{r}
+pairs(Auto)
+plot(as.factor(Auto$cylinders),Auto$mpg,xlab="cylinders",ylab="mpg")
+plot(Auto$weight,Auto$mpg,xlab="weight",ylab="mpg")
+plot(Auto$cylinders,Auto$mpg,xlab="cylinders",ylab="mpg")
+plot(Auto$year,Auto$mpg,xlab="year",ylab="mpg")
+```
+
+ 
+
+The plots show that heavier weight correlates with lower mpg.Also the more cylinders we have the less mpg we get.Last cars become more efficient over time.Actually they have almost doubled in one decade.
+
+**(f)** Suppose that we wish to predict gas mileage (mpg) on the basis of the other variables. Do your plots
+suggest that any of the other variables might be useful in predicting mpg? Justify your answer.
+
+Additionally to the previous comments,all of the predictors show some correlation with mpg. The name predictor has too little observations per name though, so using this as a predictor is ikely to result in overfitting the data and will not generalize well.
+
+##4. Linear regression##
+
+This question involves the use of simple linear regression on the Auto data set.
+
+**(a)** Use the lm() function to perform a simple linear regression with mpg as the response and horsepower as
+the predictor. Use the summary() function to print the results. Comment on the output. For example:
+```{r}
+library(ISLR)
+data("Auto")
+attach(Auto)
+
+lm.fit <- lm(mpg ~ horsepower, data=Auto)
+summary(lm.fit)
+```
+
+
+i. Is there a relationship between the predictor and the response?
+
+Yes,because the coefficient p-value has a very low value.
+
+ii. How strong is the relationship between the predictor and the response?
+
+Good evidence of relationship, $R^2$ presents a value of approximately 0.6, that's 60% of the response variance explained by the simple model.
+
+iii. Is the relationship between the predictor and the response positive or negative?
+
+Negative, since the coefficient has a negative value.
+
+iv. What is the predicted mpg associated with a horsepower of 98? What are the associated 95% confidence
+and prediction intervals?
+```{r}
+predict(lm.fit, data.frame("horsepower"=98), interval="confidence")
+predict(lm.fit, data.frame("horsepower"=98), interval="prediction")
+```
+
+
+**(b)** Plot the response and the predictor. Use the abline() function to display the least squares regression
+line.
+
+```{r}
+plot(Auto$horsepower, Auto$mpg)
+abline(lm.fit, lwd=3, col="red")
+```
+
+
+**(c)** Plot the 95% confidence interval and prediction interval in the same plot as (b) using different colours
+and legends.
+
+```{r}
+plot(Auto$horsepower, Auto$mpg)
+abline(lm.fit)
+newDist <- data.frame(horsepower=seq(45,230,length=90))
+p_conf <- predict(lm.fit,newDist,interval="confidence")
+p_pred <- predict(lm.fit,newDist,interval="prediction")
+lines(newDist$horsepower,p_conf[,"lwr"],col="red", type="b",pch="+")
+lines(newDist$horsepower,p_conf[,"upr"],col="red", type="b",pch="+")
+lines(newDist$horsepower,p_pred[,"upr"],col="blue", type="b",pch="*")
+lines(newDist$horsepower,p_pred[,"lwr"],col="blue",type="b",pch="*")
+legend("topright",
+pch=c("+","*"),
+col=c("red","blue"),
+legend = c("confidence","prediction"))
+```
+
+
+##5. Logistic regression##
+
+Using the Boston data set, fit classification models in order to predict whether a given suburb has a crime
+rate above or below the median. Explore logistic regression models using various subsets of the predictors.
+Describe your findings.
+
+```{r}
+library(MASS)
+library(ISLR)
+attach(Boston)
+
+summary(Boston)
+#Creating crimbin. It is coded as 1 if the value of crim is above median and 0 otherwise
+Boston$crimbin<-ifelse(Boston$crim>median(Boston$crim),1,0)
+#visulizing correlation
+library(corrplot)
+allcor<-cor(Boston[,])
+corrplot.mixed(allcor)
+#we can observe the high corellated predictors as nox(0.76),age(0.73),tax(0.91)
+
+#devide to test and training data (30-70)
+set.seed(1)
+subset <- sample(1:nrow(Boston), nrow(Boston)*0.70)
+train <- Boston[subset, ]
+test <- Boston[-subset, ]
+
+#Logistic Regression fit the model
+# we use as treshold for selecting a predictor 0.6 as indus , nox , age, dis, rad, tax are all have cor values higher than 0.6
+glm.fit <- glm(crimbin~indus + nox + age + dis + rad  + tax, data = train, family = binomial)
+glm.probs <- predict(glm.fit, test, type="response")
+glm.pred <- ifelse(glm.probs > 0.5, 1, 0)
+table(test$crimbin, glm.pred, dnn = c("Actual","Predicted"))
+
+mean(glm.pred != test$crimbin)
+```
+
+
+##6. Resampling methods##
+
+Suppose that we use some statistical learning method to make a prediction for the response Y for a particular
+value of the predictor X. Carefully describe how we might estimate the standard deviation of our prediction.
+
+If we suppose using some statistical learning method to make a prediction for the response Y for a paticular value of the predictor X we might estimate the standard deviation of our prediction by using various resampling methods such as cross validation or bootstrap.The basic idea is to think about the definition of standard deviation of a variable.Our variable now, is prediction.The standard deviation is the most common measure of dispersion, or how spread out the data are about the mean.So if we try to draw it,it creates two boundaries between the mean.
+
+**Cross-validation approach**
+
+The idea is to randomly divide the data into K equal-sized parts.We leave out part n,fit the model to the other n-1 parts(combined) and then obtain predictions for the left-out nth part.This is done in turn for each part n=1,2,...,K and then the results are combined and we calculate the sample standard deviation.
+
+**Bootstrap method**
+
+The idea is similar to Cross-validation.The method mimics the proccess of randomly sampling from a dataset.It then repeatedly takes n samples with replacements,from our original sample.For each of these n samples we then calculate the sample standard deviation of this estimates.
+
+In summary,Cross Validation splits the available dataset to create multiple datasets while Bootstrap method uses the original dataset to create multiple datasets after resampling with replacement.The difference is how we choose each group to obtain the predictions.The calculation of standard deviation is similar according to the data we get each time.
+
+##7. Resampling methods ##
+
+We will now perform cross-validation on a simulated data set.
+
+**(a)** Generate a simulated data set as follows:
+
+
+
+```{r}
+set.seed(500)
+y=rnorm(500)
+x=4-rnorm(500)
+y=x-2*x^2+3*x^4+rnorm(500)
+```
+In this data set, what is n and what is p? Write out the model used to generate the data in equation form.
+
+**Answer**
+
+$n=500$ is the size of the data set, 
+
+$p=1$ because we have one variable-predictor X.
+
+
+$Y=X-2X^2+3X^4+\epsilon$
+
+**(b)** Create a scatterplot of X against Y. Comment on what you find.
+```{r}
+plot(x,y,xlab="x",ylab="y")
+```
+The data obviously suggests a curved relationship.So we hahe not linear nor quadratic nor cubic relashionship.So we may assume that we have quartic relationship.
+
+**(c)** Set the seed to be 23, and then compute the LOOCV and 10-fold CV errors that result from fitting the
+following four models using least squares:
+
+**i.** $Y = \beta_0 + \beta_1X + \varepsilon$
+
+**ii.** $Y = \beta_0 + \beta_1X + \beta_2X^2 + \varepsilon$
+
+**iii.** $Y = \beta_0 + \beta_1X + \beta_2X^2 +\beta_3X^3+ \varepsilon$
+
+**iv.** $Y = \beta_0 + \beta_1X + \beta_2X^2 +\beta_3X^3+\beta_4X^4+ \varepsilon$
+
+Note you may find it helpful to use the data.frame() function to create a single data set containing both X
+and Y.
+```{r}
+library(boot)
+set.seed(23)
+Simulation<-data.frame(x,y)
+```
+### $Y = \beta_0 + \beta_1X + \varepsilon$
+```{r}
+model1.linear=glm(y~poly(x,1),data=Simulation)
+cv.error<-cv.glm(Simulation,model1.linear)     #LOOCV
+cv.error$delta[1]
+model1.linear=glm(y~poly(x,1),data=Simulation)
+cv.errork<-cv.glm(Simulation,model1.linear,K=10)  #10-fold CV
+cv.errork$delta[1]
+```
+
+### $Y = \beta_0 + \beta_1X +\beta_2X^2 +\varepsilon$
+
+```{r}
+model1.quadratic=glm(y~poly(x,2),data=Simulation)
+cv.error<-cv.glm(Simulation,model1.quadratic)  #LOOCV
+cv.error$delta[1]
+model1.quadratic=glm(y~poly(x,2),data=Simulation)
+cv.errork<-cv.glm(Simulation,model1.quadratic,K=10)  #10-fold CV
+cv.errork$delta[1]
+```
+
+### $Y = \beta_0 + \beta_1X +\beta_2X^2+\beta_3X^3+ \varepsilon$
+
+```{r}
+model1.cubic=glm(y~poly(x,3),data=Simulation)
+cv.error<-cv.glm(Simulation,model1.cubic)       #LOOCV
+cv.error$delta[1]
+model1.cubic=glm(y~poly(x,3),data=Simulation)
+cv.errork<-cv.glm(Simulation,model1.cubic,K=10)   #10-fold CV
+cv.errork$delta[1]
+
+```
+
+### $Y = \beta_0 + \beta_1X +\beta_2X^2+\beta_3X^3+\beta_4X^4 +\varepsilon$
+
+```{r}
+model1.quartic=glm(y~poly(x,4),data=Simulation)
+cv.error<-cv.glm(Simulation,model1.quartic)    #LOOCV
+cv.error$delta[1]
+model1.quartic=glm(y~poly(x,4),data=Simulation)
+cv.errork<-cv.glm(Simulation,model1.quartic,K=10)    #10-fold CV
+cv.errork$delta[1]
+```
+
+**(d)** Repeat (c) using random seed 46, and report your results. Are your results the same as what you got
+in (c)? Why?
+```{r}
+set.seed(46)
+Simulation<-data.frame(x,y)
+```
+### $Y = \beta_0 + \beta_1X + \varepsilon$
+```{r}
+model1.linear=glm(y~poly(x,1),data=Simulation)
+cv.error<-cv.glm(Simulation,model1.linear)       #LOOCV
+cv.error$delta[1]
+model1.linear=glm(y~poly(x,1),data=Simulation)
+cv.errork<-cv.glm(Simulation,model1.linear,K=10)    #10-fold CV
+cv.errork$delta[1]
+```
+
+### $Y = \beta_0 + \beta_1X +\beta_2X^2 +\varepsilon$
+
+```{r}
+model1.quadratic=glm(y~poly(x,2),data=Simulation)
+cv.error<-cv.glm(Simulation,model1.quadratic)  #LOOCV
+cv.error$delta[1]
+model1.quadratic=glm(y~poly(x,2),data=Simulation)
+cv.errork<-cv.glm(Simulation,model1.quadratic,K=10)  #10-fold CV
+cv.errork$delta[1]
+```
+
+### $Y = \beta_0 + \beta_1X +\beta_2X^2+\beta_3X^3+ \varepsilon$
+
+```{r}
+model1.cubic=glm(y~poly(x,3),data=Simulation)
+cv.error<-cv.glm(Simulation,model1.cubic)       #LOOCV
+cv.error$delta[1]
+model1.cubic=glm(y~poly(x,3),data=Simulation)
+cv.errork<-cv.glm(Simulation,model1.cubic,K=10)   #10-fold CV
+cv.errork$delta[1]
+
+```
+
+### $Y = \beta_0 + \beta_1X +\beta_2X^2+\beta_3X^3+\beta_4X^4 +\varepsilon$
+
+```{r}
+model1.quartic=glm(y~poly(x,4),data=Simulation)
+cv.error<-cv.glm(Simulation,model1.quartic)    #LOOCV
+cv.error$delta[1]
+model1.quartic=glm(y~poly(x,4),data=Simulation)
+cv.errork<-cv.glm(Simulation,model1.quartic,K=10)    #10-fold CV
+cv.errork$delta[1]
+```
+ The results above are identical to the results obtained in (c) since LOOCV evaluates n folds of a single observation.
+ 
+**(e)** Which of the models in (c) had the smallest LOOCV and 10-fold CV error? Is this what you expected?
+Explain your answer.
+
+We may see that the LOOCV and 10-fold CV estimate for the test MSE is minimum for quartic term.This is not surprising since we saw clearly in (b) that the relation between "x" and "y" is quartic.
+
+**(f)** Comment on the statistical significance of the coefficient estimates that results from fitting each of
+the models in (c) using least squares. Do these results agree with the conclusions drawn based on the
+cross-validation results?
+
+The p-values show that quartic term is statistically significant. This agree strongly with our cross-validation results which were minimum for the quartic model.
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
